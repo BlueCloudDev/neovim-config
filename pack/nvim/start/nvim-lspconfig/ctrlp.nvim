@@ -1,0 +1,11 @@
+return {
+  {
+    'ctrlpvim/ctrlp.vim',
+    lazy = false, -- ctrlp.vim needs to be loaded immediately for its keybindings to work correctly
+    init = function()
+      vim.g.ctrlp_map = '<C-p>' -- Set the default keybinding (optional, but recommended)
+      vim.g.ctrlp_cmd = 'CtrlP' -- Set the command name (optional, defaults to CtrlP)
+      -- Add any other ctrlp.vim configuration here if needed
+    end,
+  }
+}
