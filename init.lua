@@ -45,6 +45,25 @@ require("typescript-tools").setup {
   },
 }
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'Go to Definition'})
+vim.keymap.set('n', 'gr', vim.lsp.buf.references, { desc = 'Get References'})
+vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'LSP Code Action' })
+vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr, desc = 'LSP Hover' })
+
+
+
+-- In your Neovim config (e.g., in a file loaded by lspconfig's on_attach)
+vim.keymap.set("n", "<leader>e", function()
+  vim.diagnostic.open_float({ focusable = true })
+end, { desc = "LSP: Show line diagnostics (floating window)" })
+
+-- For visual mode to evaluate selection
+vim.keymap.set("v", "<leader>e", function()
+  vim.diagnostic.open_float({ focusable = true })
+end, { desc = "LSP: Show selection diagnostics (floating window)" })
+
+vim.keymap.set({"n", "i"}, "<C-k>", vim.lsp.buf.signature_help, { desc = "LSP: Signature Help" })
+
+vim.keymap.set('n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<cr>', { desc = 'Show diagnostics' })
 
 -- Set line numbers
 vim.opt.number = true
@@ -69,6 +88,7 @@ vim.keymap.set('n', '<leader>w', ':w<CR>')
 vim.opt.termguicolors = true
 
 -- Set the default terminal background to light (adjust as needed)
-vim.opt.background = "dark"
+--vim.opt.background = "dark"
 
-
+-- Set the color scheme
+vim.cmd('colorscheme vague')

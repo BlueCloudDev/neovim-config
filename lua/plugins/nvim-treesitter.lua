@@ -12,7 +12,7 @@ return {
 		enable = true,
 		-- Setting this to `true` will run `:h syntax` and tree-sitter at the same time.
 		-- Set this to `false` if you experience any issues with syntax highlighting.
-		additional_vim_regex_highlighting = false,
+		additional_vim_regex_highlighting = true,
 	      },
 	      indent = { enable = true },
 	      -- You can enable more modules here, see the documentation:
