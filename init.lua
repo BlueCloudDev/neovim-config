@@ -92,3 +92,5 @@ vim.opt.termguicolors = true
 
 -- Set the color scheme
 vim.cmd('colorscheme vague')
+
+vim.lsp.set_log_level("debug")
