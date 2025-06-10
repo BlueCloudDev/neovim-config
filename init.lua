@@ -1,3 +1,19 @@
+-- Define the shada directory and file path
+-- Using stdpath('data') ensures it follows XDG Base Directory Spec
+local shada_dir = vim.fn.stdpath('data') .. '/shada'
+local shada_file = shada_dir .. '/main.shada'
+
+-- IMPORTANT: Create the directory if it doesn't exist
+-- Neovim creates the file, but not parent directories.
+vim.fn.mkdir(shada_dir, 'p')
+
+-- Set the shadafile option
+vim.o.shadafile = shada_file
+
+-- Configure what shada actually saves. 'f1000' is crucial for filenames.
+-- This ensures oldfiles are saved consistently.
+vim.o.shada = "'100,<100,s10,h,f1000,n"
+
 require("config.lazy")
 require("typescript-tools").setup {
  settings = {
