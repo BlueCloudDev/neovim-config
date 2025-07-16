@@ -9,23 +9,58 @@ return {
     -- Or, you can set it as a dependency of nvim-dap-ui and let dap-ui handle lazy loading.
     lazy = true,
     dependencies = {
-      "nvim-neotest/nvim-nio", -- Required for nvim-dap
+      "rcarriga/nvim-dap-ui",             -- UI for DAP
+      "nvim-neotest/nvim-nio",           -- Dependency for nvim-dap-ui
+      "theHamsta/nvim-dap-virtual-text", -- Shows virtual text for variables
+      "jay-babu/mason-nvim-dap.nvim",    -- Integrates Mason with DAP
     },
     config = function()
       -- General nvim-dap configuration (e.g., keymaps, adapters)
       local dap = require("dap")
+      local dapui = require("dapui")
+      local dap_virtual_text = require("nvim-dap-virtual-text")
 
-      -- Example Keymaps for nvim-dap
-      vim.keymap.set("n", "<F5>", dap.continue, { desc = "DAP: Continue" })
-      vim.keymap.set("n", "<F10>", dap.step_over, { desc = "DAP: Step Over" })
-      vim.keymap.set("n", "<F11>", dap.step_into, { desc = "DAP: Step Into" })
-      vim.keymap.set("n", "<F12>", dap.step_out, { desc = "DAP: Step Out" })
-      vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "DAP: Toggle Breakpoint" })
-      vim.keymap.set("n", "<leader>B", function()
-        dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-      end, { desc = "DAP: Set Conditional Breakpoint" })
-      vim.keymap.set("n", "<leader>dr", dap.repl.open, { desc = "DAP: Open REPL" })
-      vim.keymap.set("n", "<leader>dl", dap.run_last, { desc = "DAP: Run Last" })
+      dap_virtual_text.setup()
+      dapui.setup()
+      
+      -- Automatically open/close DAP UI
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+
+      vim.fn.sign_define("DapBreakpoint", { text = "🔴", texthl = "", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapStopped", { text = "▶️", texthl = "", linehl = "", numhl = "" })
+
+      -- Basic debugging commands
+      vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
+      vim.keymap.set("n", "<leader>dr", dap.continue, { desc = "DAP Run/Continue" })
+      vim.keymap.set("n", "<leader>dc", dap.run_to_cursor, { desc = "DAP Run to Cursor" })
+      vim.keymap.set("n", "<leader>dn", dap.step_over, { desc = "DAP Step Over" })
+      vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "DAP Step Into" })
+      vim.keymap.set("n", "<leader>do", dap.step_out, { desc = "DAP Step Out" })
+     -- vim.keymap.set("n", "<leader>dK", dap.hover_variables, { desc = "DAP Hover Variables" })
+      vim.keymap.set("n", "<leader>dt", function() dap.terminate() dapui.close() end, { desc = "DAP Terminate" })
+      vim.keymap.set("n", "<leader>dd", dap.repl.toggle, { desc = "DAP Toggle REPL" })
+      vim.keymap.set("n", "<leader>dl", function() dap.set_log_level("TRACE") dap.trace_next_request() end, { desc = "DAP Set Log Level (Trace)" })
+      vim.keymap.set("n", "<leader>dL", dap.list_breakpoints, { desc = "DAP List Breakpoints" })
+      -- vim.keymap.set("n", "<leader>dS", dap.scopes, { desc = "DAP Scopes" })
+      
+      -- DAP UI specific commands
+      vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "DAP UI Toggle" })
+      vim.keymap.set("n", "<leader>de", dapui.eval, { desc = "DAP UI Eval" })
+     
+      -- Go-specific commands (from nvim-dap-go)
+      vim.keymap.set("n", "<leader>dgt", function() require("dap-go").debug_test() end, { desc = "DAP Go Debug Test" })
+      
 
       -- Set up DAP adapters for languages (example for Python with debugpy)
       -- This is crucial for debugging specific languages.
@@ -51,6 +86,43 @@ return {
 
       -- You'll add more adapters and configurations for other languages you debug.
       -- Refer to `nvim-dap` documentation or `mason-nvim-dap.nvim` for more.
+    end,
+  },
+
+  -- Go-specific DAP extension
+  {
+    "leoluz/nvim-dap-go",
+    ft = "go", -- Only load this plugin for Go files
+    dependencies = { "mfussenegger/nvim-dap" },
+    config = function()
+      require("dap-go").setup({
+        -- Optional: Configure Delve options if needed
+        -- delve = {
+        --   -- detached = false, -- Set to true if you want dlv to run in a separate terminal process
+        -- },
+        -- -- Example custom configurations (can also be defined in .vscode/launch.json)
+        -- dap_configurations = {
+        --   {
+        --     type = "go",
+        --     name = "Launch file",
+        --     request = "launch",
+        --     program = "${file}",
+        --   },
+        --   {
+        --     type = "go",
+        --     name = "Launch current directory",
+        --     request = "launch",
+        --     program = "${workspaceFolder}",
+        --   },
+        --   {
+        --     type = "go",
+        --     name = "Test current file",
+        --     request = "launch",
+        --     mode = "test",
+        --     program = "${file}",
+        --   },
+        -- },
+      })
     end,
   },
 
@@ -127,12 +199,6 @@ return {
         dapui.close({})
       end
 
-      -- Example Keymaps for nvim-dap-ui
-      vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "DAP UI: Toggle" })
-      vim.keymap.set("n", "<leader>de", dapui.eval, { desc = "DAP UI: Evaluate Expression (Normal mode)" })
-      vim.keymap.set("v", "<leader>de", function()
-        dapui.eval(nil, { enter = true })
-      end, { desc = "DAP UI: Evaluate Expression (Visual mode)" })
     end,
   },
 
@@ -150,8 +216,9 @@ return {
       ensure_installed = {
         -- Add the debug adapters you need here
         "debugpy", -- For Python
-        --"js-debug", -- For JavaScript/TypeScript
-        --"delve", -- For Go
+        "js-debug", -- For JavaScript/TypeScript
+        "delve", -- For Go
+        "go"
       },
     },
     config = function(_, opts)
@@ -159,11 +226,4 @@ return {
     end,
   },
 
-  -- Optional: nvim-dap-virtual-text for inline variable values
-  {
-    "theHamsta/nvim-dap-virtual-text",
-    lazy = true,
-    dependencies = { "mfussenegger/nvim-dap" },
-    opts = {}, -- Default options are usually fine
-  },
 }

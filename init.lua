@@ -65,7 +65,7 @@ vim.keymap.set('n', 'gr', vim.lsp.buf.references, { desc = 'Get References'})
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'LSP Code Action' })
 vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr, desc = 'LSP Hover' })
 
-
+vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true })
 
 -- In your Neovim config (e.g., in a file loaded by lspconfig's on_attach)
 vim.keymap.set("n", "<leader>e", function()

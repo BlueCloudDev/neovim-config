@@ -30,5 +30,34 @@ return {
 		    -- Other settings as needed
 		    -- root_dir = lspconfig.util.root_pattern("compile_commands.json", ".git", ".clangd"),
 		})
+
+
+		lspconfig.gopls.setup({
+		  on_attach = on_attach,
+		  -- cmd = { "gopls" }, -- gopls is usually found in PATH, so this is often not needed
+		  settings = {
+		    gopls = {
+		      buildFlags = {}, -- Add any specific build flags if needed
+		      -- You can configure various gopls settings here.
+		      -- For example, to enable analyses:
+		      analyses = {
+			shadow = true,
+			unusedparams = true,
+			unusedwrite = true,
+		      },
+		      staticcheck = true, -- Enables staticcheck analysis (recommended)
+		      -- For more options, see `gopls help settings` or :help gopls-settings
+		      -- Example for UI.Completion documentation on hover:
+		      ui = {
+			completion = {
+			  insertTextFormat = "Snippet", -- or "PlainText"
+			  documentation = {
+			    enable = true,
+			  },
+			},
+		      },
+		    },
+		  },
+		})
 	end,
 }
