@@ -2,14 +2,13 @@ return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
-		local lspconfig = require("lspconfig")
-
+		local lspconfig = vim.lsp.config
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 		-- fixes WARNING Found buffers attached to multiple clients with different position encodings.
 		capabilities.offsetEncoding = { "utf-8" }
 
-		local util = require("lspconfig.util")
-		lspconfig.clangd.setup({
+		local util = vim.lsp.util
+		vim.lsp.config('clangd', {
 		    capabilities = capabilities,
 		    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "cu" }, -- Add 'cuda' here
 		    cmd = {
@@ -32,7 +31,7 @@ return {
 		})
 
 
-		lspconfig.gopls.setup({
+		vim.lsp.config('gopls', {
 		  on_attach = on_attach,
 		  -- cmd = { "gopls" }, -- gopls is usually found in PATH, so this is often not needed
 		  settings = {
