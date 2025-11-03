@@ -3,11 +3,18 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		local lspconfig = vim.lsp.config
+<<<<<<< HEAD
+=======
+    local util = require('lspconfig.util')
+>>>>>>> 4d5ee0a (added dap go)
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 		-- fixes WARNING Found buffers attached to multiple clients with different position encodings.
 		capabilities.offsetEncoding = { "utf-8" }
 
+<<<<<<< HEAD
 		local util = vim.lsp.util
+=======
+>>>>>>> 4d5ee0a (added dap go)
 		vim.lsp.config('clangd', {
 		    capabilities = capabilities,
 		    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "cu" }, -- Add 'cuda' here
@@ -33,6 +40,7 @@ return {
 
 		vim.lsp.config('gopls', {
 		  on_attach = on_attach,
+      root_dir = util.root_pattern('go.mod'),
 		  -- cmd = { "gopls" }, -- gopls is usually found in PATH, so this is often not needed
 		  settings = {
 		    gopls = {
@@ -40,20 +48,20 @@ return {
 		      -- You can configure various gopls settings here.
 		      -- For example, to enable analyses:
 		      analyses = {
-			shadow = true,
-			unusedparams = true,
-			unusedwrite = true,
+      			shadow = true,
+			      unusedparams = true,
+			      unusedwrite = true,
 		      },
 		      staticcheck = true, -- Enables staticcheck analysis (recommended)
 		      -- For more options, see `gopls help settings` or :help gopls-settings
 		      -- Example for UI.Completion documentation on hover:
 		      ui = {
-			completion = {
-			  insertTextFormat = "Snippet", -- or "PlainText"
-			  documentation = {
-			    enable = true,
-			  },
-			},
+			      completion = {
+			        insertTextFormat = "Snippet", -- or "PlainText"
+			        documentation = {
+			          enable = true,
+			        },
+			      },
 		      },
 		    },
 		  },
