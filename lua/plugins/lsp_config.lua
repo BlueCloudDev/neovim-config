@@ -1,70 +1,55 @@
 return {
-	"neovim/nvim-lspconfig",
-	event = { "BufReadPre", "BufNewFile" },
-	config = function()
-		local lspconfig = vim.lsp.config
-<<<<<<< HEAD
-=======
+  "neovim/nvim-lspconfig",
+  
+  -- FIX #2: Tell lazy.nvim to load nvim-cmp *before* this file
+  dependencies = {
+    "hrsh7th/nvim-cmp",
+  },
+
+  event = { "BufReadPre", "BufNewFile" },
+  
+  config = function()
+    -- Use require('lspconfig') instead of vim.lsp.config
+    local lspconfig = require('lspconfig') 
     local util = require('lspconfig.util')
->>>>>>> 4d5ee0a (added dap go)
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
-		-- fixes WARNING Found buffers attached to multiple clients with different position encodings.
-		capabilities.offsetEncoding = { "utf-8" }
 
-<<<<<<< HEAD
-		local util = vim.lsp.util
-=======
->>>>>>> 4d5ee0a (added dap go)
-		vim.lsp.config('clangd', {
-		    capabilities = capabilities,
-		    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "cu" }, -- Add 'cuda' here
-		    cmd = {
-		        "clangd-17",
-			"--background-index",
-		        "--clang-tidy",
-		        "--header-insertion=iwyu",
-		        "--completion-style=detailed",
-		        "--function-arg-placeholders",
-		        "--fallback-style=llvm",
-		        -- Add CUDA-specific flags
-		        --"--cuda-path=/usr/local/cuda", -- **Important:** Adjust this path to your CUDA installation
-		        -- You might need other flags depending on your project, e.g.:
-		        -- "-xcuda", -- Force clangd to treat files as CUDA
-		        -- "-std=c++17", -- or c++20, or gnu++17 etc.
-		        -- "-I/path/to/your/project/cuda/headers", -- if you have custom CUDA headers
-		    },
-		    -- Other settings as needed
-		    -- root_dir = lspconfig.util.root_pattern("compile_commands.json", ".git", ".clangd"),
-		})
+    -- This require() is now safe because of the dependency
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    capabilities.offsetEncoding = { "utf-8" }
 
 
-		vim.lsp.config('gopls', {
-		  on_attach = on_attach,
+    -- FIX #1: Define the 'on_attach' function
+    local function on_attach(client, bufnr)
+      -- This enables diagnostics (the squiggly lines)
+      vim.diagnostic.enable(bufnr)
+
+      -- This sets up keymaps, BUT only for this buffer
+      local bufopts = { noremap = true, silent = true, buffer = bufnr }
+      
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+      vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+      vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+      vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+      vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+    end
+
+
+    -- Use the standard lspconfig.gopls.setup() function
+    lspconfig.gopls.setup({
+      on_attach = on_attach, -- Now this variable exists
+      capabilities = capabilities,
       root_dir = util.root_pattern('go.mod'),
-		  -- cmd = { "gopls" }, -- gopls is usually found in PATH, so this is often not needed
-		  settings = {
-		    gopls = {
-		      buildFlags = {}, -- Add any specific build flags if needed
-		      -- You can configure various gopls settings here.
-		      -- For example, to enable analyses:
-		      analyses = {
-      			shadow = true,
-			      unusedparams = true,
-			      unusedwrite = true,
-		      },
-		      staticcheck = true, -- Enables staticcheck analysis (recommended)
-		      -- For more options, see `gopls help settings` or :help gopls-settings
-		      -- Example for UI.Completion documentation on hover:
-		      ui = {
-			      completion = {
-			        insertTextFormat = "Snippet", -- or "PlainText"
-			        documentation = {
-			          enable = true,
-			        },
-			      },
-		      },
-		    },
-		  },
-		})
-	end,
+      settings = {
+        gopls = {
+          buildFlags = {},
+          analyses = {
+            shadow = true,
+            unusedparams = true,
+            unusedwrite = true,
+          },
+          staticcheck = true,
+        },
+      },
+    })
+  end,
 }
