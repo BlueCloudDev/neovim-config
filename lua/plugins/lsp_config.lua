@@ -6,11 +6,8 @@ return {
     "hrsh7th/nvim-cmp",
   },
 
-  event = { "BufReadPre", "BufNewFile" },
-  
+
   config = function()
-    -- Use require('lspconfig') instead of vim.lsp.config
-    local lspconfig = require('lspconfig') 
     local util = require('lspconfig.util')
 
     -- This require() is now safe because of the dependency
@@ -33,23 +30,94 @@ return {
       vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
     end
 
-
-    -- Use the standard lspconfig.gopls.setup() function
-    lspconfig.gopls.setup({
-      on_attach = on_attach, -- Now this variable exists
-      capabilities = capabilities,
-      root_dir = util.root_pattern('go.mod'),
-      settings = {
-        gopls = {
-          buildFlags = {},
-          analyses = {
-            shadow = true,
-            unusedparams = true,
-            unusedwrite = true,
+    require("lspconfig").gopls.setup {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        cmd = {"gopls"},
+        filetypes = { "go", "gomod", "gowork", "gotmpl" },
+        root_dir = util.root_pattern("go.work", "go.mod", ".git"),
+        settings = {
+          gopls = {
+            completeUnimported = true,
+            usePlaceholders = true,
+            analyses = {
+              unusedparams = true,
+            },
           },
-          staticcheck = true,
+        },
+      }
+
+
+    vim.lsp.config("vue_ls", {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      init_options = {
+        vue = {
+          hybridMode = false,
         },
       },
+      filetypes = { 'vue', 'javascript', 'typescript' }
+    })
+
+    vim.lsp.config("ts_ls", {
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+
+    vim.lsp.config("vtsls", {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      --/home/jblau/.nvm/versions/node/v24.11.1/lib/node_modules/@vue/
+      settings = {
+        vtsls = {
+          tsserver = {
+            globalPlugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = vim.fn.expand('$HOME/.nvm/versions/node/v24.11.1/lib/node_modules/@vue/language-server'), -- Adjust path if not using Mason
+                languages = { 'vue' },
+                configNamespace = 'typescript',
+              },
+            },
+          },
+        },
+      },
+      filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+    })
+
+    -- This is apparently for Vue 2?
+    --   on_attach = on_attach,
+    --   capabilities = capabilities,
+    --   filetypes = { 'vue', 'javascript', 'typescript', 'html', 'css', 'scss' },
+    --   settings = {
+    --     vetur = {
+    --       -- You can put other vetur-specific settings here
+    --       completion = {
+    --         autoImport = true,
+    --       }
+    --     },
+        
+    --     -- THIS IS THE FIX:
+    --     -- We are configuring the internal HTML service
+    --     -- that VLS uses.
+    --     html = {
+    --       suggest = {
+    --         -- This disables completions for standard HTML 
+    --         -- attributes, which includes 'onclick'.
+    --         attributes = false, 
+            
+    --         -- You can also set this to false to be safe,
+    --         -- though 'attributes = false' usually gets it.
+    --         events = false 
+    --       }
+    --     }
+    --   }
+    -- })
+
+    vim.lsp.config("tailwindcss", {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      filetypes = { 'vue', 'javascript', 'typescript', 'html', 'css', 'scss' }
     })
   end,
 }

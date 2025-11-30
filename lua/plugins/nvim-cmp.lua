@@ -3,7 +3,7 @@ return {
   {'hrsh7th/nvim-cmp',
     dependencies = {
       {'hrsh7th/cmp-buffer'},     -- Source for buffer completions
-      {'hrsh7th/cmp-path'},       -- Source for file path completions
+--      {'hrsh7th/cmp-path'},       -- Source for file path completions
       {'saadparwaiz1/cmp_luasnip'}, -- Source for snippet completions
       {'hrsh7th/cmp-nvim-lsp'},   -- Source for LSP completions
       {'L3MON4D3/LuaSnip'},       -- Snippet engine (required by cmp_luasnip)

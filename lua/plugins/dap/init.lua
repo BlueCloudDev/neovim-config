@@ -7,6 +7,7 @@ return {
     keys = {
       { "<leader>b", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
       { "<leader>dr", function() require("dap").continue() end, desc = "DAP Run/Continue" },
+      { "<leader>de", function() require("dap").restart() end, desc = "DAP Restart Session" },
       { "<leader>dc", function() require("dap").run_to_cursor() end, desc = "DAP Run to Cursor" },
       { "<leader>dn", function() require("dap").step_over() end, desc = "DAP Step Over" },
       { "<leader>di", function() require("dap").step_into() end, desc = "DAP Step Into" },
@@ -51,7 +52,7 @@ return {
       -- 1. We list the elements we want
         elements = {
           "scopes",
-          "breakpoints",
+      "breakpoints",
           "stacks",
           "watches",
           "repl"
@@ -83,6 +84,18 @@ return {
       -- ... (other config like 'floating', 'icons', etc. can go here)
 
      })
+
+
+      vim.api.nvim_create_autocmd("BufWinEnter", {
+        callback = function()
+          if vim.bo.filetype == "dap-repl" then
+            vim.opt_local.wrap = true
+            vim.opt_local.linebreak = true
+          end
+        end,
+      })
+
+
       -- This is the correct place for listeners that bridge dap and dapui
       dap.listeners.before.attach.dapui_config = function()
         dapui.open()
@@ -96,6 +109,9 @@ return {
       dap.listeners.before.event_exited.dapui_config = function()
         dapui.close()
       end
+
+        
+
     end,
   },
 
