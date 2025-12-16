@@ -23,13 +23,16 @@ return {
       require('telescope').setup {
         -- You can add your default configuration here, or leave it empty for defaults
         defaults = {
-          
+          file_ignore_patterns = {
+            "^node_modules/",
+            "/node_modules/",
+          }
         },
      }
      extensions = {
      	frecency = {
-	  ignore_patterns = {}
-	}
+	      ignore_patterns = {}
+	    }
      }
 
       -- Define your keybindings here (optional, but highly recommended)

@@ -30,7 +30,8 @@ return {
       vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
     end
 
-    require("lspconfig").gopls.setup {
+    lspconfig = require("lspconfig")
+    lspconfig.gopls.setup {
         on_attach = on_attach,
         capabilities = capabilities,
         cmd = {"gopls"},
@@ -47,22 +48,64 @@ return {
         },
       }
 
+    local lspconfig = require('lspconfig')
+    local vue_ls_path = '/home/jblau/.nvm/versions/node/v24.11.1/lib/node_modules/@vue/language-server/bin/vue-language-server.js'
+    -- Configuration for the Vue Language Server
+    -- lspconfig.volar.setup {
+    --   on_attach = on_attach,
+    --   capabilities = capabilities,
+    --   filetypes = { 'vue' }, -- ONLY activate on .vue files
+    --   init_options = {
+    --     vue = {
+    --       -- This is the key: allows tsserver to handle the TS logic internally
+    --       hybridMode = true,
+    --       -- You can specify the Vue version if needed, but Vue 3 is default
+    --       version = 3,
+    --     },
+    --     -- Point to your project's node_modules/typescript if possible
+    --     typescript = {
+    --       tsdk = "node_modules/typescript/lib" 
+    --     }
+    --   },
+    -- }
 
-    vim.lsp.config("vue_ls", {
-      on_attach = on_attach,
-      capabilities = capabilities,
-      init_options = {
-        vue = {
-          hybridMode = false,
-        },
-      },
-      filetypes = { 'vue', 'javascript', 'typescript' }
-    })
+        -- Configuration for the Standard TypeScript Language Server
+    -- Use 'tsserver' if you are using Mason/lspconfig default
+    -- OR use 'typescript-tools' if you prefer that dedicated plugin
+    -- lspconfig.tsserver.setup {
+    --   on_attach = on_attach,
+    --   capabilities = capabilities,
+    --   -- Activate on all files *except* .vue
+    --   filetypes = { 
+    --     'typescript', 
+    --     'javascript', 
+    --     'javascriptreact', 
+    --     'typescriptreact' 
+    --   },
+    --   -- Recommended: Disable the built-in tsserver diagnostics to avoid conflicts
+    --   -- with vue_ls reporting the same diagnostics inside SFCs.
+    --   settings = {
+    --     typescript = {
+    --       disableAutomaticTypeAcquisition = true
+    --     }
+    --   }
+    -- }
 
-    vim.lsp.config("ts_ls", {
-      on_attach = on_attach,
-      capabilities = capabilities,
-    })
+    --vim.lsp.config("vue_ls", {
+    --  on_attach = on_attach,
+    --  capabilities = capabilities,
+    --  init_options = {
+    --    vue = {
+    --      hybridMode = false,
+    --    },
+    --  },
+    --  filetypes = { 'vue', 'javascript', 'typescript' }
+    --})
+
+    --vim.lsp.config("ts_ls", {
+    --  on_attach = on_attach,
+    --  capabilities = capabilities,
+    --})
 
     vim.lsp.config("vtsls", {
       on_attach = on_attach,
@@ -114,10 +157,10 @@ return {
     --   }
     -- })
 
-    vim.lsp.config("tailwindcss", {
-      on_attach = on_attach,
-      capabilities = capabilities,
-      filetypes = { 'vue', 'javascript', 'typescript', 'html', 'css', 'scss' }
-    })
+    -- vim.lsp.config("tailwindcss", {
+    --   on_attach = on_attach,
+    --   capabilities = capabilities,
+    --   filetypes = { 'vue', 'javascript', 'typescript', 'html', 'css', 'scss' }
+    -- })
   end,
 }
